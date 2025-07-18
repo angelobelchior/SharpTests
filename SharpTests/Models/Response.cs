@@ -60,10 +60,12 @@ public class ResponseStatistics
     public Dictionary<int, TimeSpan> ConnectionTLSHandshakeTimePercentiles { get; }
 
     private readonly Options _options;
+    private readonly int _totalRequests;
 
-    public ResponseStatistics(Options options, List<Response> responses)
+    public ResponseStatistics(Options options, int totalRequests, List<Response> responses)
     {
         _options = options;
+        _totalRequests = totalRequests;
 
         TotalInteractions = responses.Count;
         StatusCodePercentages = responses
@@ -160,48 +162,53 @@ public class ResponseStatistics
         Console.WriteLine($"Percentual de Sucesso: {SuccessPercentage:F2}%");
         Console.WriteLine("Percentual por Status Code:");
         foreach (var statusCode in StatusCodePercentages)
-        {
             Console.WriteLine($"  Status Code {statusCode.Key}: {statusCode.Value:F2}%");
-        }
+        Console.WriteLine();
 
-        Console.WriteLine($"\nTempo Total de Connecting: {ConnectingTime.Total}");
-        Console.WriteLine($"  Tempo Médio de Connecting: {ConnectingTime.Average.ToWrite()}");
-        Console.WriteLine($"  Menor Tempo de Connecting: {ConnectingTime.Min.ToWrite()}");
-        Console.WriteLine($"  Maior Tempo de Connecting: {ConnectingTime.Max.ToWrite()}");
+        Console.WriteLine($"Tempo Total de Connecting: {ConnectingTime.Total}");
+        Console.WriteLine($"Tempo Médio de Connecting: {ConnectingTime.Average.ToWrite()}");
+        Console.WriteLine($"Menor Tempo de Connecting: {ConnectingTime.Min.ToWrite()}");
+        Console.WriteLine($"Maior Tempo de Connecting: {ConnectingTime.Max.ToWrite()}");
         Console.WriteLine("Connecting Time:");
         PrintPercentiles(ConnectionConnectingTimePercentiles);
-
-        Console.WriteLine($"\nTempo Total de TLS Handshake: {TLSHandshakeTime.Total}");
-        Console.WriteLine($"  Tempo Médio de TLS Handshake: {TLSHandshakeTime.Average.ToWrite()}");
-        Console.WriteLine($"  Menor Tempo de TLS Handshake: {TLSHandshakeTime.Min.ToWrite()}");
-        Console.WriteLine($"  Maior Tempo de TLS Handshake: {TLSHandshakeTime.Max.ToWrite()}");
+        Console.WriteLine();
+        
+        Console.WriteLine($"Tempo Total de TLS Handshake: {TLSHandshakeTime.Total}");
+        Console.WriteLine($"Tempo Médio de TLS Handshake: {TLSHandshakeTime.Average.ToWrite()}");
+        Console.WriteLine($"Menor Tempo de TLS Handshake: {TLSHandshakeTime.Min.ToWrite()}");
+        Console.WriteLine($"Maior Tempo de TLS Handshake: {TLSHandshakeTime.Max.ToWrite()}");
         Console.WriteLine("TLS Handshake Time:");
         PrintPercentiles(ConnectionTLSHandshakeTimePercentiles);
+        Console.WriteLine();
+        
+        Console.WriteLine($"Total de Requisições: {_totalRequests}");
+        Console.WriteLine($"Tempo Total de Requisições: {Request.Total}");
+        Console.WriteLine($"Tempo Médio de Requisição: {Request.Average.ToWrite()}");
+        Console.WriteLine($"Menor Tempo de Requisição: {Request.Min.ToWrite()}");
+        Console.WriteLine($"Maior Tempo de Requisição: {Request.Max.ToWrite()}");
+        Console.WriteLine();
 
-        Console.WriteLine($"\nTempo Total de Requisições: {Request.Total}");
-        Console.WriteLine($"  Tempo Médio de Requisição: {Request.Average.ToWrite()}");
-        Console.WriteLine($"  Menor Tempo de Requisição: {Request.Min.ToWrite()}");
-        Console.WriteLine($"  Maior Tempo de Requisição: {Request.Max.ToWrite()}");
-
-        Console.WriteLine($"\nTempo Total de Header Sending: {HeaderSendingTime.Total}");
-        Console.WriteLine($"  Tempo Médio de Header Sending: {HeaderSendingTime.Average.ToWrite()}");
-        Console.WriteLine($"  Menor Tempo de Header Sending: {HeaderSendingTime.Min.ToWrite()}");
-        Console.WriteLine($"  Maior Tempo de Header Sending: {HeaderSendingTime.Max.ToWrite()}");
+        Console.WriteLine($"Tempo Total de Header Sending: {HeaderSendingTime.Total}");
+        Console.WriteLine($"Tempo Médio de Header Sending: {HeaderSendingTime.Average.ToWrite()}");
+        Console.WriteLine($"Menor Tempo de Header Sending: {HeaderSendingTime.Min.ToWrite()}");
+        Console.WriteLine($"Maior Tempo de Header Sending: {HeaderSendingTime.Max.ToWrite()}");
         Console.WriteLine("Sending Time:");
         PrintPercentiles(HeaderSendingTimePercentiles);
+        Console.WriteLine();
 
-        Console.WriteLine($"\nTempo Total de Header Waiting: {HeaderWaitingTime.Total}");
-        Console.WriteLine($"  Tempo Médio de Header Waiting: {HeaderWaitingTime.Average.ToWrite()}");
-        Console.WriteLine($"  Menor Tempo de Header Waiting: {HeaderWaitingTime.Min.ToWrite()}");
-        Console.WriteLine($"  Maior Tempo de Header Waiting: {HeaderWaitingTime.Max.ToWrite()}");
+        Console.WriteLine($"Tempo Total de Header Waiting: {HeaderWaitingTime.Total}");
+        Console.WriteLine($"Tempo Médio de Header Waiting: {HeaderWaitingTime.Average.ToWrite()}");
+        Console.WriteLine($"Menor Tempo de Header Waiting: {HeaderWaitingTime.Min.ToWrite()}");
+        Console.WriteLine($"Maior Tempo de Header Waiting: {HeaderWaitingTime.Max.ToWrite()}");
         Console.WriteLine("Waiting Time:");
         PrintPercentiles(HeaderWaitingTimePercentiles);
+        Console.WriteLine();
     }
 
     private void PrintPercentiles(Dictionary<int, TimeSpan> percentiles)
     {
         foreach (var percentile in percentiles)
-            Console.WriteLine($"  P{percentile.Key}: {percentile.Value.ToWrite()}");
+            Console.WriteLine($"  P({percentile.Key}): {percentile.Value.ToWrite()}");
     }
 }
 

@@ -19,6 +19,7 @@ public static partial class Global // Test
 
         var currentVirtualUsers = 0;
         var tasks = new List<Task>();
+        var totalTasks = 0;
 
         Console.WriteLine($"Iniciando teste com {totalIterations} iterações...");
 
@@ -26,12 +27,8 @@ public static partial class Global // Test
         {
             var progressPercent = (i * 100) / totalIterations;
             foreach (var chunk in chunks)
-            {
                 if (progressPercent >= chunk.Percentual)
-                {
                     currentVirtualUsers = chunk.VirtualUsers;
-                }
-            }
 
             Console.WriteLine(
                 $"Iteração {i + 1}/{totalIterations} - Progresso: {progressPercent}% - Virtual Users: {currentVirtualUsers}");
@@ -44,6 +41,7 @@ public static partial class Global // Test
                     var response = await test(http);
                     responses.Add(response);
                 }));
+                totalTasks++;
             }
 
             if (tasks.Count >= currentVirtualUsers)
@@ -63,7 +61,7 @@ public static partial class Global // Test
         Console.WriteLine("Teste concluído. Gerando estatísticas...");
         Console.WriteLine();
         
-        var responseStatistics = new ResponseStatistics(options, responses.ToList());
+        var responseStatistics = new ResponseStatistics(options, totalTasks, responses.ToList());
         responseStatistics.PrintStatistics();
     }
 }
